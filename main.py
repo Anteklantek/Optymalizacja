@@ -2,11 +2,9 @@ from typing import List
 import itertools
 
 import pandas as pd
-import shapefile
 
 
 def odleglosc(miasto_a: str, miasto_b: str):
-    print(f"liczę odległość między {miasto_a} a {miasto_b}")
     a = odleglosci.loc[odleglosci['city'] == miasto_a]
     return a[miasto_b]._values[0]
 
@@ -42,6 +40,7 @@ def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str],
     miasta = wagi["Nazwa"].tolist()[:]
     miasta = [miasto for miasto in miasta if miasto not in dotychczasowa_trasa]
     if len(dotychczasowa_trasa) == liczba_miast:
+        print(f"Liczę kombinację: {dotychczasowa_trasa}")
         dlugosc_najkrotszej_trasy = oblicz_najkrotsza_trase(dotychczasowa_trasa)
         return dlugosc_najkrotszej_trasy, dotychczasowa_trasa[:]
     for miasto in miasta:
@@ -60,7 +59,7 @@ def znajdz_najlepsza_trase_z_limitem_wg_kolumn(limit: int, dotychczasowa_trasa: 
     return znajdz_najlepsza_trase_z_limitem(limit, dotychczasowa_trasa, liczba_miast)
 
 
-print(znajdz_najlepsza_trase_z_limitem(200, [], 3))
+print(znajdz_najlepsza_trase_z_limitem(30, [], 3))
 
 """
 #Pomysły
