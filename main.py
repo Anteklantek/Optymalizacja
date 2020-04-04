@@ -2,6 +2,8 @@ from typing import List
 import itertools
 
 import pandas as pd
+import shapefile
+
 
 def odleglosc(miasto_a: str, miasto_b: str):
     print(f"liczę odległość między {miasto_a} a {miasto_b}")
@@ -34,4 +36,51 @@ najwieksze_5 = wagi[0:5]
 odleglosci = pd.read_csv('./odleglosci.csv')
 trasa = najwieksze_5["Nazwa"].tolist()
 
-print(oblicz_najkrotsza_trase(trasa))
+limit = 100
+
+def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str], liczba_miast: int):
+    miasta = wagi["Nazwa"].tolist()[:]
+    miasta = [miasto for miasto in miasta if miasto not in dotychczasowa_trasa]
+    if len(dotychczasowa_trasa) == liczba_miast:
+        dlugosc_najkrotszej_trasy = oblicz_najkrotsza_trase(dotychczasowa_trasa)
+        return dlugosc_najkrotszej_trasy, dotychczasowa_trasa[:]
+    for miasto in miasta:
+        dotychczasowa_trasa.append(miasto)
+        kopia = dotychczasowa_trasa[:]
+        dlugosc_trasy, trasa = znajdz_najlepsza_trase_z_limitem(limit, kopia, liczba_miast)
+        if dlugosc_trasy < limit:
+            return dlugosc_trasy, trasa
+        else:
+            dotychczasowa_trasa = dotychczasowa_trasa[:-1]
+    return limit + 1, []
+
+
+def znajdz_najlepsza_trase_z_limitem_wg_kolumn(limit: int, dotychczasowa_trasa: List[str], liczba_miast: int, kolumny: List[str]):
+    # wagi = wyliczane na podstawie wczytanego pliku z parametru kolumny z funkcji
+    return znajdz_najlepsza_trase_z_limitem(limit, dotychczasowa_trasa, liczba_miast)
+
+
+print(znajdz_najlepsza_trase_z_limitem(200, [], 3))
+
+"""
+#Pomysły
+- liczenie długości tras bez permutacji "lustrzanych" CAB == BAC -> tylko od tyłu, da tę samą długość
+- doimplementowanie metody "znajdz_najlepsza_trase_z_limitem_wg_kolumn"
+- pokazanie trasy na mapie
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
