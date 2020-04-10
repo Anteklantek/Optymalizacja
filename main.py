@@ -1,6 +1,5 @@
 from typing import List
 import itertools
-
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
@@ -10,13 +9,14 @@ def odleglosc(miasto_a: str, miasto_b: str):                                    
     a = odleglosci.loc[odleglosci['city'] == miasto_a]                                                                  # odwolanie sie do tabeli odleglosci, w ktorej to sa odleglosci pomiedzy poszzczegolnymi miastami
     return a[miasto_b]._values[0]                                                                                       # zwroc odleglosc pomiedzy podanymi miastami
 
+
 def oblicz_dlugosc_trasy(trasa: List[str]):                                                                             # liczymy dlugosc trasy, danej lista
     suma_odleglosci: float = 0                                                                                          # zerujemy licznik sumy odleglosci, ktora bedzie wzrastac po kazdym dodaniu odleglosci
     for i, miasto in enumerate(trasa):                                                                                  # petla dzieki ktorej bedzie mozliwe liczenie dlugosci i dodawanie kolejnych odleglosci
         if(i == len(trasa)-1):
             break
-        nastepne_miasto = trasa[i+1]
-        suma_odleglosci += odleglosc(miasto, nastepne_miasto)
+        nastepne_miasto = trasa[i+1]                                                                                    # dodajemy kolejne miast do liczenia trasy
+        suma_odleglosci += odleglosc(miasto, nastepne_miasto)                                                           # do poprzedniej sumy odleglosci pomiedzy miastami dodajemy najnowszą  odległosc
     return suma_odleglosci                                                                                              # zwrocona zostaje suma odleglosci
 
 
@@ -29,17 +29,6 @@ def oblicz_najkrotsza_trase(trasa: List[str]):                                  
             najkrotsza_trasa = dlugosc_trasy                                                                            # nadpisz najkrotsza trase
     return najkrotsza_trasa                                                                                             # zwraca nam najkrotsza obliczona trase
 
-'''
-def wybrana_kolumna(wedlug: str)
-        wagi = pd.read_csv('./wagi_miast.csv')                                                                          # wczytanie tabeli z miastami
-        wagi.sort_values(wedlug, axis = 0, ascending = False,                                                           # posortowanie danych w tabeli wedlug wagi od najwyzszej do najnizszej
-                 inplace = True, na_position ='last')
-        return wagi.sort_values
-
-najwieksze_5 = wagi[0:5]                                                                                                # funkcja dla 5 najwyzzych miast z najwyzszymi wagami
-odleglosci = pd.read_csv('./odleglosci.csv')                                                                            # wczytanie tabeli z odleglosciami miedzy miastami
-trasa = najwieksze_5["Nazwa"].tolist()                                                                                  # wziecie pod uwage trasy z 5 najwiekszymi wartosciami biorac pod uwage miasta (kolumna miasta)
-'''
 
 def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str], liczba_miast: int, wagi: DataFrame):   # funkcja wlasciwa ktora oblicza nam trase miedzy zadanymi miastami biorac pod uwage specjalne parametry
     miasta = wagi["Nazwa"].tolist()[:]                                                                                  # pusta lista miasta bioraca pod uwage kolumne z miastami
@@ -51,7 +40,7 @@ def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str],
     for miasto in miasta:                                                                                               # kolejna petla
         dotychczasowa_trasa.append(miasto)                                                                              # dodaje nam miasto do dotychczasowej trasy
         kopia = dotychczasowa_trasa[:]                                                                                  # kopia, ktora umozliwi rekurencje (odwolanie sie do samej siebie)
-        dlugosc_trasy, trasa = znajdz_najlepsza_trase_z_limitem(limit, kopia, liczba_miast,wagi)                             # znajduje nam trase z najlepsza dlugoscia dla danych miast (optymalne rozwiazanie)
+        dlugosc_trasy, trasa = znajdz_najlepsza_trase_z_limitem(limit, kopia, liczba_miast,wagi)                        # znajduje nam trase z najlepsza dlugoscia dla danych miast (optymalne rozwiazanie)
         if dlugosc_trasy < limit:                                                                                       # jezeli dlugosc trasy NIE przekrasza podanego w parametrach kryterium (np. 1500km)
             return dlugosc_trasy, trasa                                                                                 # zwroc dlugosc trasy
         #if len(kopia) >= 5 and limit <=750 and dlugosc_trasy < limit:                                                  # zabezpieczenie gdy dlugosc trasy jest bardzo mala a miast jest duzo zeby eliminowal wiecej krokow
@@ -62,7 +51,7 @@ def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str],
 
 
 def znajdz_najlepsza_trase_z_limitem_wg_kolumn(limit: int, dotychczasowa_trasa: List[str], liczba_miast: int, kolumna: str):
-    wagi = pd.read_csv('./wagi_miast.csv')
+    wagi = pd.read_csv('./wagi_miast.csv')                                                                              # wczytujemy tabele z danymi
     wagi.sort_values(kolumna, axis=0, ascending=False,                                                                  # posortowanie danych w tabeli wedlug wagi od najwyzszej do najnizszej
                      inplace=True, na_position='last')
     return znajdz_najlepsza_trase_z_limitem(limit, dotychczasowa_trasa, liczba_miast, wagi)
@@ -74,14 +63,14 @@ najwieksze_5 = wagi[0:5]                                                        
 odleglosci = pd.read_csv('./odleglosci.csv')                                                                            # wczytanie tabeli z odleglosciami miedzy miastami
 trasa = najwieksze_5["Nazwa"].tolist()
 
-#def wygeneruj_najlepsza_trase_na_mapie():
 
 # Zadanie 1
 print("Zadanie 1:")
 print(znajdz_najlepsza_trase_z_limitem(1500, [], 5,wagi))
 
 # Zadanie 2
-# wprowdzilem element losowosci, zeby pasowalo to do dowolnej ilosc miast lub dowolnej odleglosci zsumowanej miedzy miastami
+# wprowadzono element losowosci, zeby pasowalo to do dowolnej ilosc miast lub dowolnej odleglosci zsumowanej miedzy miastami
+# oczywiscie tez mozna samemu wprowdzic dane
 odl_los = np.random.randint(3000)
 probki = np.random.randint(10)
 
@@ -89,24 +78,29 @@ probki = np.random.randint(10)
 print(odl_los)
 print(probki)
 
-print("Zadanie 2:")
+print("Zadanie 2 z losowymi wielkosciami:")
+print(znajdz_najlepsza_trase_z_limitem(odl_los, [], probki,wagi))
+
+# tutaj wprowadzenie samemu wielkosci parametrow
+odl_los = int(input("Podaj maksymalną odległość: "))
+probki = int(input("Podaj ilosć miast: "))
+
+print("Zadanie 2 z wybranymi wielkosciami:")
 print(znajdz_najlepsza_trase_z_limitem(odl_los, [], probki,wagi))
 
 
 # Zadanie 3
+# dodano tutaj odpowiednie inputy, aby moc wprowadzać zadane odleglosci/kolumne z tabeli/
 max_odl = int(input("Podaj maksymalną odległość: "))
 ilosc_miast = int(input("Podaj ilosć miast: "))
+print(wagi.columns)
 kolumna = str(input("Podaj kolumne: "))
 
 print("Zadanie 3:")
 print(znajdz_najlepsza_trase_z_limitem_wg_kolumn(max_odl,[],ilosc_miast,kolumna))
 
-# Zadanie 4
-
-
 """
 #Pomysły
 - liczenie długości tras bez permutacji "lustrzanych" CAB == BAC -> tylko od tyłu, da tę samą długość
-- doimplementowanie metody "znajdz_najlepsza_trase_z_limitem_wg_kolumn"
 - pokazanie trasy na mapie
 """
