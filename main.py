@@ -1,9 +1,8 @@
-from typing import List
 import itertools
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-
+from typing import List
 
 def odleglosc(miasto_a: str, miasto_b: str):                                                                            # funkcja liczaca odleglosc pomiedzy dwoma miastami
     a = odleglosci.loc[odleglosci['city'] == miasto_a]                                                                  # odwolanie sie do tabeli odleglosci, w ktorej to sa odleglosci pomiedzy poszzczegolnymi miastami
@@ -43,8 +42,6 @@ def znajdz_najlepsza_trase_z_limitem(limit: int, dotychczasowa_trasa: List[str],
         dlugosc_trasy, trasa = znajdz_najlepsza_trase_z_limitem(limit, kopia, liczba_miast,wagi)                        # znajduje nam trase z najlepsza dlugoscia dla danych miast (optymalne rozwiazanie)
         if dlugosc_trasy < limit:                                                                                       # jezeli dlugosc trasy NIE przekrasza podanego w parametrach kryterium (np. 1500km)
             return dlugosc_trasy, trasa                                                                                 # zwroc dlugosc trasy
-        #if len(kopia) >= 5 and limit <=750 and dlugosc_trasy < limit:                                                  # zabezpieczenie gdy dlugosc trasy jest bardzo mala a miast jest duzo zeby eliminowal wiecej krokow
-        #   dotychczasowa_trasa = dotychczasowa_trasa[:-5]                                                              # ale srednio dziala bo potem i tak przywraca te same trasy na zmiane :(
         else:                                                                                                           # jezeli przekracza ta dlugosc
             dotychczasowa_trasa = dotychczasowa_trasa[:-1]                                                              # usun poprzednie miasto z funkcji i policz inaczej (przez inne miasto)
     return limit + 1, []                                                                                                # zwroc wynik najlepszej trasy
@@ -90,7 +87,7 @@ print(znajdz_najlepsza_trase_z_limitem(odl_los, [], probki,wagi))
 
 
 # Zadanie 3
-# dodano tutaj odpowiednie inputy, aby moc wprowadzać zadane odleglosci/kolumne z tabeli/
+# dodano tutaj odpowiednie inputy, aby moc wprowadzać zadane odleglosci/kolumne z tabeli
 max_odl = int(input("Podaj maksymalną odległość: "))
 ilosc_miast = int(input("Podaj ilosć miast: "))
 print(wagi.columns)
@@ -98,9 +95,3 @@ kolumna = str(input("Podaj kolumne: "))
 
 print("Zadanie 3:")
 print(znajdz_najlepsza_trase_z_limitem_wg_kolumn(max_odl,[],ilosc_miast,kolumna))
-
-"""
-#Pomysły
-- liczenie długości tras bez permutacji "lustrzanych" CAB == BAC -> tylko od tyłu, da tę samą długość
-- pokazanie trasy na mapie
-"""
